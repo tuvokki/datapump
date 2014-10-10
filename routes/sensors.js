@@ -1,8 +1,10 @@
 var express    = require('express'),
     router     = express.Router(),
     sensorReg  = require('save')('sensor'),
-    sensorSpec = require('save')('sensorspecs')
+    sensorSpec = require('save')('sensorspecs'),
+    sensorData = require('save')('sensordata')
 
+/** CREATE THE SENSORS **/
 _sensorlist = [{name: "test", id: 1, active: true},{name: "tosti", id: 2, active: true},{name: "taart", id: 3, active: false}]
 
 _sensorlist.forEach(function(item) { 
@@ -14,9 +16,22 @@ _sensorlist.forEach(function(item) {
       sensorSpec.create({sensor_id: item.id, capabilities: {temp: true, motion: false, video: false}})
   })
 })
+/** END CREATE THE SENSORS **/
 
-/* GET list   of sensors available. */
-router.get(  '/', function(req, res) {
+/** CREATE THE SENSORDATA **/
+function sensor_reading (s_id) {
+  return {temp: '19,5'}
+}
+
+/* GET all readings for this sensor */
+router.get('/:id/readings', function(req, res) {
+  readings = sensor_reading();
+  console.log("readings", readings);
+  res.send(readings)
+});
+
+/* GET list of sensors available. */
+router.get('/', function(req, res) {
   sensorReg.find({}, function (error, sensors) {
     if (error) {
       console.log("error fetching data sensorReg: ", error)
