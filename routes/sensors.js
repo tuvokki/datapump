@@ -2,7 +2,9 @@ var express    = require('express'),
     router     = express.Router(),
     sensorReg  = require('save')('sensor'),
     sensorSpec = require('save')('sensorspecs'),
-    sensorData = require('save')('sensordata')
+    sensorData = require('save')('sensordata'),
+    moment     = require('moment'),
+    range      = require('moment-range')
 
 /** CREATE THE SENSORS **/
 _sensorlist = [{name: "test", id: 1, active: true},{name: "tosti", id: 2, active: true},{name: "taart", id: 3, active: false}]
@@ -19,6 +21,32 @@ _sensorlist.forEach(function(item) {
 /** END CREATE THE SENSORS **/
 
 /** CREATE THE SENSORDATA **/
+// moment().format();
+
+/*
+Iterate over your date range by an amount of time or another range:
+
+var start = new Date(2012, 2, 1);
+var two   = new Date(2012, 2, 2);
+var end   = new Date(2012, 2, 5);
+var range1 = moment().range(start, end);
+var range2 = moment().range(start, two); // One day
+var acc = [];
+
+range1.by('days', function(moment) {
+  // Do something with `moment`
+});
+Any of the units accepted by moment.js' add method may be used.
+
+You can also iterate by another range:
+
+range1.by(range2, function(moment) {
+  // Do something with `moment`
+  acc.push(moment);
+});
+
+acc.length == 5 // true
+*/
 function sensor_reading (s_id) {
   return {temp: '19,5', motion: true, video: 'stream'}
 }
