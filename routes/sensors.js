@@ -20,7 +20,7 @@ _sensorlist.forEach(function(item) {
 
 /** CREATE THE SENSORDATA **/
 function sensor_reading (s_id) {
-  return {temp: '19,5'}
+  return {temp: '19,5', motion: true, video: 'stream'}
 }
 
 /* GET all readings for this sensor */
@@ -28,6 +28,13 @@ router.get('/:id/readings', function(req, res) {
   readings = sensor_reading();
   console.log("readings", readings);
   res.send(readings)
+});
+
+/* GET all readings for this sensor */
+router.get('/:id/readings/:type', function(req, res) {
+  readings = sensor_reading();
+  reading_type = req.params.type
+  res.send({reading_type: readings[reading_type]})
 });
 
 /* GET list of sensors available. */
