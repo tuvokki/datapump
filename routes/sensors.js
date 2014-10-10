@@ -1,7 +1,7 @@
 var express    = require('express'),
     router     = express.Router(),
     sensorReg  = require('save')('sensor'),
-    sensorSpec = require('save')('sensordata')
+    sensorSpec = require('save')('sensorspecs')
 
 _sensorlist = [{name: "test", id: 1, active: true},{name: "tosti", id: 2, active: true},{name: "taart", id: 3, active: false}]
 
@@ -42,8 +42,7 @@ router.get('/:id', function(req, res) {
         if (sensorspec) {
           sensor.specs = []
           sensorspec.forEach(function(sspec) {
-            console.log("sspec.capabilities", sspec.capabilities);
-            sensor.specs.push(sspec.capabilities)
+            sensor.specs.push({ set: sspec._id, capabilities: sspec.capabilities})
           })
         }
         // sensor.specs = sensorspec
