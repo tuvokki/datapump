@@ -4,54 +4,39 @@
 
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 <script type="text/javascript">
-  var data = [];  
-  var httpRequest = new XMLHttpRequest();
-  httpRequest.open('GET', '/sensors/1/readings/temp', true);
-  httpRequest.send(null);
-  httpRequest.onreadystatechange = function(response){
-    // process the server response
-    if (httpRequest.readyState === 4) {
-        // everything is good, the response is received
-      if (httpRequest.status === 200) {
-          // perfect!
-          resp = JSON.parse(response.target.responseText);
-          resp.forEach(function(item) {
-            // console.log('item', item);
-            data.push(item.temp);
-          });
-          var width = 420,
-              barHeight = 14;
 
-          var x = d3.scale.linear()
-              .domain([0, d3.max(data)])
-              .range([0, width]);
+var width = 420,
+    barHeight = 20;
+var data_url = '/sensors/1/readings/temp';
 
-          var chart = d3.select(".chart")
-              .attr("width", width)
-              .attr("height", barHeight * data.length);
+var x = d3.scale.linear()
+    .range([0, width]);
 
-          var bar = chart.selectAll("g")
-              .data(data)
-            .enter().append("g")
-              .attr("transform", function(d, i) { return "translate(0," + i * barHeight + ")"; });
+var chart = d3.select(".chart")
+    .attr("width", width);
 
-          bar.append("rect")
-              .attr("width", x)
-              .attr("height", barHeight - 1);
+d3.json(data_url, function(error, data) {
+  // console.log('data', data);
+  x.domain([0, d3.max(data, function(d) {
+    return d.temp;
+  })]);
+  console.log('x.domain', x.domain);
+  chart.attr("height", barHeight * data.length);
 
-          bar.append("text")
-              .attr("x", function(d) { return x(d) - 3; })
-              .attr("y", barHeight / 2)
-              .attr("dy", ".35em")
-              .text(function(d) { return d; });
+  var bar = chart.selectAll("g")
+      .data(data)
+    .enter().append("g")
+      .attr("transform", function(d, i) { return "translate(0," + i * barHeight + ")"; });
 
-      } else {
-          // there was a problem with the request,
-          // for example the response may contain a 404 (Not Found)
-          // or 500 (Internal Server Error) response code
-      }
-    } else {
-        // still not ready
-    }
-  };
+  bar.append("rect")
+      .attr("width", function(d) { return x(d.temp); })
+      .attr("height", barHeight - 1);
+
+  bar.append("text")
+      .attr("x", function(d) { return x(d.temp) - 3; })
+      .attr("y", barHeight / 2)
+      .attr("dy", ".35em")
+      .text(function(d) { return d.temp; });
+});
+
 </script>
