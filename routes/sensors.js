@@ -8,7 +8,10 @@ _sensorlist = [{name: "test", id: 1, active: true},{name: "tosti", id: 2, active
 _sensorlist.forEach(function(item) { 
   sensorReg.create({ name: item.name, id: item.id, active: item.active }, function (error, user) {
     if (error) console.log("error saving data sensorReg: ", error)
-    else sensorSpec.create({sensor_id: item.id, capabilities: {temp: true, motion: false, video: false}})
+    else
+      if (item.id === 2) //a sensor can have multiple spec definitions
+        sensorSpec.create({sensor_id: item.id, capabilities: {temp: true, motion: true, video: true}})
+      sensorSpec.create({sensor_id: item.id, capabilities: {temp: true, motion: false, video: false}})
   })
 })
 
@@ -36,9 +39,14 @@ router.get('/:id', function(req, res) {
     if (sensor) {
       //found a sensor, now get the specifications for it
       sensorSpec.find({ 'sensor_id': sensor.id }, function(error, sensorspec) {
-        console.log("sensorspec", sensorspec)
-        
-        sensor.specs = sensorspec
+        if (sensorspec) {
+          sensor.specs = []
+          sensorspec.forEach(function(sspec) {
+            console.log("sspec.capabilities", sspec.capabilities);
+            sensor.specs.push(sspec.capabilities)
+          })
+        }
+        // sensor.specs = sensorspec
         res.send(sensor)
       })
     } else {
