@@ -25,6 +25,8 @@ _sensorlist.forEach(function(item) {
  * Using Math.round() will give you a non-uniform distribution!
  */
 function getRandomInt(min, max) {
+  if (min < 12) min = 12;
+  if (max < 21) max = 21;
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
@@ -61,10 +63,12 @@ function sensor_reading (s_id, start_time, end_time, type) {
   var retval = [];
   var tmp_temp = getRandomInt(12,21);
   var alldates = moment().range(start, end);
-  alldates.by('hours', function(moment) {
+  alldates.by('minutes', function(moment) {
     //iterate the daterange by minute
     tmp_temp = getRandomInt(tmp_temp-1, tmp_temp+1);
-    var tmp_date = moment.get('year') + "-" + moment.get('month') + "-" + moment.get('date') + " " + moment.get('hour') + ":" + moment.get('minute');
+    // var tmp_date = moment.get('year') + "-" + moment.get('month') + "-" + moment.get('date') + "T" + moment.get('hour') + ":" + moment.get('minute') + ":00Z";
+    //2005-07-08T00:00:00Z
+    var tmp_date = moment.format();
     if (type) // TODO: must be temp, we fix this later
       retval.push({time: tmp_date, temp: tmp_temp})
     else
