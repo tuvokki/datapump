@@ -8,7 +8,7 @@
 var data_url = '/sensors/1/readings/temp';
 
 var margin = {top: 20, right: 20, bottom: 30, left: 50},
-    width = 960 - margin.left - margin.right,
+    width = 1260 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
 var parseDate = d3.time.format("%d-%b-%y").parse;
@@ -28,6 +28,7 @@ var yAxis = d3.svg.axis()
     .orient("left");
 
 var line = d3.svg.line()
+    .interpolate('cardinal')
     .x(function(d) { return x(d.time); })
     .y(function(d) { return y(d.temp); });
 

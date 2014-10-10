@@ -76,7 +76,7 @@ router.get('/:id/readings', function(req, res) {
 
 /* GET all readings for this sensor filtered by type */
 router.get('/:id/readings/:type', function(req, res) {
-  readings = sensor_reading(req.params.id, "10-09-2014", "10-10-2014", req.params.type); //MM-DD-YYYY
+  readings = sensor_reading(req.params.id, "10-07-2014", "10-10-2014", req.params.type); //MM-DD-YYYY
   res.send(readings)
 });
 
