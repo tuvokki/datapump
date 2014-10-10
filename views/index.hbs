@@ -1,2 +1,37 @@
 <h1>{{title}}</h1>
-<p>Welcome to {{title}}</p>
+
+<div class="chart"></div>
+
+<script type="text/javascript">
+  var data = [];  
+  var httpRequest = new XMLHttpRequest();
+  httpRequest.open('GET', '/sensors/1/readings/temp', true);
+  httpRequest.send(null);
+  httpRequest.onreadystatechange = function(response){
+    // process the server response
+    if (httpRequest.readyState === 4) {
+        // everything is good, the response is received
+      if (httpRequest.status === 200) {
+          // perfect!
+          resp = JSON.parse(response.target.responseText);
+          resp.forEach(function(item) {
+            console.log('item', item);
+            data.push(item.temp);
+          });
+          d3.select(".chart")
+          .selectAll("div")
+            .data(data)
+          .enter().append("div")
+            .style("width", function(d) { return d * 10 + "px"; })
+            .style("height", '6px')
+            .text(function(d) { return d; });
+      } else {
+          // there was a problem with the request,
+          // for example the response may contain a 404 (Not Found)
+          // or 500 (Internal Server Error) response code
+      }
+    } else {
+        // still not ready
+    }
+  };
+</script>

@@ -20,6 +20,14 @@ _sensorlist.forEach(function(item) {
 })
 /** END CREATE THE SENSORS **/
 
+/**
+ * Returns a random integer between min (inclusive) and max (inclusive)
+ * Using Math.round() will give you a non-uniform distribution!
+ */
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 /** CREATE THE SENSORDATA **/
 // moment().format();
 
@@ -47,22 +55,34 @@ range1.by(range2, function(moment) {
 
 acc.length == 5 // true
 */
-function sensor_reading (s_id) {
-  return {temp: '19,5', motion: true, video: 'stream'}
+function sensor_reading (s_id, start_time, end_time, type) {
+  var start = moment(start_time, "MM-DD-YYYY");
+  var end   = moment(end_time, "MM-DD-YYYY");
+  var retval = [];
+
+  var alldates = moment().range(start, end);
+  alldates.by('hours', function(moment) {
+    //iterate the daterange by minute
+    var tmp_temp = getRandomInt(12, 22);
+    var tmp_date = moment.get('year') + "-" + moment.get('month') + "-" + moment.get('date') + " " + moment.get('hour') + ":" + moment.get('minute');
+    if (type) // TODO: must be temp, we fix this later
+      retval.push({time: tmp_date, temp: tmp_temp})
+    else
+      retval.push({time: tmp_date, temp: tmp_temp, motion: true, video: 'stream'})
+  });
+  return retval;
 }
 
 /* GET all readings for this sensor */
 router.get('/:id/readings', function(req, res) {
-  readings = sensor_reading();
-  console.log("readings", readings);
+  readings = sensor_reading(2, "10-09-2014", "10-10-2014"); //MM-DD-YYYY
   res.send(readings)
 });
 
-/* GET all readings for this sensor */
+/* GET all readings for this sensor filtered by type */
 router.get('/:id/readings/:type', function(req, res) {
-  readings = sensor_reading();
-  reading_type = req.params.type
-  res.send({reading_type: readings[reading_type]})
+  readings = sensor_reading(2, "10-09-2014", "10-10-2014", req.params.type); //MM-DD-YYYY
+  res.send(readings)
 });
 
 /* GET list of sensors available. */
