@@ -4,10 +4,14 @@ var express    = require('express'),
     sensorSpec = require('save')('sensorspecs'),
     sensorData = require('save')('sensordata'),
     moment     = require('moment'),
-    range      = require('moment-range')
+    range      = require('moment-range'),
+    chance     = require('chance')(72436598176)
 
 /** CREATE THE SENSORS **/
-_sensorlist = [{name: "test", id: 1, active: true},{name: "tosti", id: 2, active: true},{name: "taart", id: 3, active: false}]
+_sensorlist = [ {name: "testi", id: 1, active: true,  mintemp: 12, maxtemp: 21},
+                {name: "tosti", id: 2, active: true,  mintemp: 14, maxtemp: 23},
+                {name: "taart", id: 3, active: false, mintemp: 14, maxtemp: 20}
+              ]
 
 _sensorlist.forEach(function(item) { 
   sensorReg.create({ name: item.name, id: item.id, active: item.active }, function (error, user) {
@@ -20,72 +24,59 @@ _sensorlist.forEach(function(item) {
 })
 /** END CREATE THE SENSORS **/
 
+/** --Utility methods-- **/
+/**
+ * Returns a random boolean
+ * In this case only a 30% likelihood of true, and a 70% likelihood of false.
+ */
+function getRandomBool(){
+  //The default likelihood of success (returning true) is 50%
+  return chance.bool({likelihood: 30});
+}
+
 /**
  * Returns a random integer between min (inclusive) and max (inclusive)
  * Using Math.round() will give you a non-uniform distribution!
  */
-function getRandomInt(min, max) {
-  if (min < 12) min = 12;
-  if (max < 21) max = 21;
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+function getRandomTemp(min, max) {
+  if (min < 10) min = 10;
+  if (max > 30) max = 30;
+  return chance.floating({min: min, max: max, fixed: 2}) 
 }
+/** --Utility methods-- **/
 
 /** CREATE THE SENSORDATA **/
-// moment().format();
-
-/*
-Iterate over your date range by an amount of time or another range:
-
-var start = new Date(2012, 2, 1);
-var two   = new Date(2012, 2, 2);
-var end   = new Date(2012, 2, 5);
-var range1 = moment().range(start, end);
-var range2 = moment().range(start, two); // One day
-var acc = [];
-
-range1.by('days', function(moment) {
-  // Do something with `moment`
-});
-Any of the units accepted by moment.js' add method may be used.
-
-You can also iterate by another range:
-
-range1.by(range2, function(moment) {
-  // Do something with `moment`
-  acc.push(moment);
-});
-
-acc.length == 5 // true
-*/
 function sensor_reading (s_id, start_time, end_time, type) {
   var start = moment(start_time, "MM-DD-YYYY");
   var end   = moment(end_time, "MM-DD-YYYY");
   var retval = [];
-  var tmp_temp = getRandomInt(12,21);
+  var tmp_temp = getRandomTemp(12,21);
   var alldates = moment().range(start, end);
-  alldates.by('minutes', function(moment) {
+  alldates.by('hours', function(moment) {
     //iterate the daterange by minute
-    tmp_temp = getRandomInt(tmp_temp-1, tmp_temp+1);
-    // var tmp_date = moment.get('year') + "-" + moment.get('month') + "-" + moment.get('date') + "T" + moment.get('hour') + ":" + moment.get('minute') + ":00Z";
-    //2005-07-08T00:00:00Z
-    var tmp_date = moment.format();
+    tmp_temp = getRandomTemp(tmp_temp-1, tmp_temp+1);
+
+    var tmp_date = moment.format(); //get the date from the moment
     if (type) // TODO: must be temp, we fix this later
-      retval.push({time: tmp_date, temp: tmp_temp})
+      if (type == "temp")
+        retval.push({sensor_id: s_id, time: tmp_date, temp: tmp_temp})
+      else if (type == "motion")
+        retval.push({sensor_id: s_id, time: tmp_date, motion: getRandomBool()})
     else
-      retval.push({time: tmp_date, temp: tmp_temp, motion: true, video: 'stream'})
+      retval.push({sensor_id: s_id, time: tmp_date, temp: tmp_temp, motion: getRandomBool(), video: 'stream'})
   });
   return retval;
 }
 
 /* GET all readings for this sensor */
 router.get('/:id/readings', function(req, res) {
-  readings = sensor_reading(2, "10-09-2014", "10-10-2014"); //MM-DD-YYYY
+  readings = sensor_reading(req.params.id, "10-09-2014", "10-10-2014"); //MM-DD-YYYY
   res.send(readings)
 });
 
 /* GET all readings for this sensor filtered by type */
 router.get('/:id/readings/:type', function(req, res) {
-  readings = sensor_reading(2, "10-09-2014", "10-10-2014", req.params.type); //MM-DD-YYYY
+  readings = sensor_reading(req.params.id, "10-09-2014", "10-10-2014", req.params.type); //MM-DD-YYYY
   res.send(readings)
 });
 

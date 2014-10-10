@@ -8,7 +8,12 @@ router.get('/', function(req, res) {
 
 /* GET bars page. */
 router.get('/bars', function(req, res) {
-  res.render('bars', { title: 'The Sensor App' });
+  res.render('bars', { title: 'Temperatures in bars' });
+});
+
+/* GET line page. */
+router.get('/line', function(req, res) {
+  res.render('line', { title: 'Temperature evolves' });
 });
 
 module.exports = router;
