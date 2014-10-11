@@ -16,4 +16,9 @@ router.get('/line', function(req, res) {
   res.render('line', { title: 'Temperature evolves' });
 });
 
+/* GET circles page. */
+router.get('/circles', function(req, res) {
+  res.render('circles', { title: 'Chart circles' });
+});
+
 module.exports = router;

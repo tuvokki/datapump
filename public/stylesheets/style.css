@@ -33,3 +33,24 @@ a {
   stroke: steelblue;
   stroke-width: 1.5px;
 }
+.graph-svg-component {
+    background-color: AliceBlue;
+}
+path {
+    stroke: steelblue;
+    stroke-width: 2;
+    fill: none;
+}
+ 
+line {
+    stroke: black;
+}
+ 
+text {
+    font-family: Arial;
+    font-size: 9pt;
+}
+.visuals {
+  height: 400px;
+  width: 100%;
+}
