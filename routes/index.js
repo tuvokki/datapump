@@ -26,4 +26,9 @@ router.get('/bounce', function(req, res) {
   res.render('bounce', { title: 'Chart bounce' });
 });
 
+/* GET tempdots page. */
+router.get('/tempdots', function(req, res) {
+  res.render('tempdots', { title: 'Chart tempdots' });
+});
+
 module.exports = router;
