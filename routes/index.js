@@ -21,4 +21,9 @@ router.get('/circles', function(req, res) {
   res.render('circles', { title: 'Chart circles' });
 });
 
+/* GET bounce page. */
+router.get('/bounce', function(req, res) {
+  res.render('bounce', { title: 'Chart bounce' });
+});
+
 module.exports = router;
