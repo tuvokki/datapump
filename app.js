@@ -25,6 +25,23 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/sensors', sensors);
 
+// print request info
+app.use(function(req, res, next) {
+    var end = res.end;
+    var time = new Date;
+    res.end = function(chunk, encoding){
+        res.end = end;
+        if (chunk) {
+          //the remote ip
+          var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+          // console.log('DEV REQ from: ' + ip);
+          console.log('[' + time + '] ' + ip);
+        }
+        res.end(chunk, encoding);
+    };
+    next();
+});
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
