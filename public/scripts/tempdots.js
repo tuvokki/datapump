@@ -1,7 +1,10 @@
+margin = {top: 20, right: 20, bottom: 30, left: 40}
 var view = {}
-view.width = document.getElementsByClassName('visuals')[0].offsetWidth;
-view.height = document.getElementsByClassName('visuals')[0].offsetHeight
+view.width = document.getElementsByClassName('visuals')[0].offsetWidth - margin.left - margin.right
+view.height = document.getElementsByClassName('visuals')[0].offsetHeight - margin.top - margin.bottom
 
+console.log("margin", margin);
+console.log("view", view);
 
 var data_url = '/sensors/1/readings/temp';
 
@@ -29,10 +32,11 @@ var line = d3.svg.line()
     .x(function(d) { return x(d.time); })
     .y(function(d) { return y(d.temp); });
 
-var svg = d3.select(".visuals")
-    .append("svg")
-    .attr("width", view.width)
-    .attr("height", view.height);
+var svg = d3.select(".visuals").append("svg")
+    .attr("width", view.width + margin.left + margin.right)
+    .attr("height", view.height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 d3.json(data_url, function(error, data) {
   data.forEach(function(d) {
@@ -42,18 +46,16 @@ d3.json(data_url, function(error, data) {
   x.domain(d3.extent(data, function(d) { return d.time; }));
   y.domain(d3.extent(data, function(d) { return d.temp; }));
   r = d3.scale.linear().domain(d3.extent(data, function(d) { return d.temp; })).range([5,10]),
-  c = d3.scale.linear().domain(d3.extent(data, function(d) { return d.temp; })).range(["hsl(100, 50%, 50%)", "hsl(850, 100%, 50%)"]).interpolate(d3.interpolateHsl)
+  c = d3.scale.linear().domain(d3.extent(data, function(d) { return d.temp; })).range(["rgb(0, 0, 255)", "rgb(255, 0, 0)"]).interpolate(d3.interpolateRgb)
 
-//both the x and y scale are transformed to fit in the view
-// using margins would be better
+  //the x axis is transformed to the bottom of the view
   svg.append("g")
       .attr("class", "x axis")
-      .attr("transform", "translate(0," + (view.height - 20) + ")")
+      .attr("transform", "translate(0," + view.height + ")")
       .call(xAxis);
 
   svg.append("g")
       .attr("class", "y axis")
-      .attr("transform", "translate(40,0)")
       .call(yAxis)
     .append("text")
       .attr("transform", "rotate(-90)")
