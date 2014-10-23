@@ -1,14 +1,29 @@
 var express = require('express');
 var router = express.Router();
 
-/* GET bars page. */
+/* GET index page. */
 router.get('/', function(req, res) {
   res.render('index', { title: 'The Sensor App' });
+});
+
+/* GET interactivedots page. */
+router.get('/interactivedots', function(req, res) {
+  res.render('interactivedots', { title: 'random values using the Ziggurat algorithm' });
+});
+
+/* GET dots page. */
+router.get('/dots', function(req, res) {
+  res.render('dots', { title: 'random values using the Ziggurat algorithm' });
 });
 
 /* GET bars page. */
 router.get('/bars', function(req, res) {
   res.render('bars', { title: 'Temperatures in bars' });
+});
+
+/* GET bell page. */
+router.get('/bell', function(req, res) {
+  res.render('bell', { title: 'Just a bell' });
 });
 
 /* GET line page. */
