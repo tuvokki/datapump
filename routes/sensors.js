@@ -37,8 +37,8 @@ function value_sort_down(a, b) {
 }
 
 router.get('/bell/:num', function(req, res) {
-  // console.log("req.params.num", req.params.num);
   var result = []
+  // we start with a nice, randomized set of values
   if (validator.isNumeric(req.params.num)) {
     for (var i = req.params.num - 1; i >= 0; i--) {
       var ff = {
@@ -51,40 +51,39 @@ router.get('/bell/:num', function(req, res) {
       result.push(ff)
     };
   }
-  // var sortedresult = result.sort(value_sort_up);
-  // for (var i = sortedresult.length - 1; i >= 0; i--) {
-  //   sortedresult[i].Number = i
-  // };
-  result.sort(value_sort_up);
-  var half_length = Math.ceil(result.length / 2);    
-  // console.log("half_length", half_length);
-  // console.log("result.length", result.length);
-  var leftSide = result.splice(0,half_length).sort(value_sort_down);
-  // console.log("leftSide", leftSide);
-  var rightSide = result.sort(value_sort_up);
-  // console.log("rightSide", rightSide);
 
+  //first sort the array
+  result.sort(value_sort_up);
+  //split it in two equal parts
+  var half_length = Math.ceil(result.length / 2);    
+  var leftSide = result.splice(0,half_length).sort(value_sort_down);
+  var rightSide = result.sort(value_sort_up);
+  //create a new empty array that will hold the result
   var bell = [];
 
+  //re-index the left side and filter out all the positive values
   for (var i = 0; i < leftSide.length; i++) {
-  // for (var i = leftSide.length - 1; i >= 0; i--) {
-    if (leftSide[i].Value >= 0) {
+    if (leftSide[i].Value > 0) {
       leftSide.splice(i,1)
       break;
     }
+    //provive a new label
     leftSide[i].Number = i;
     leftSide[i].Side = "left" + i
+    //push it to the result array
     bell.push(leftSide[i])
   };
 
-  // for (var i = rightSide.length - 1; i >= 0; i--) {
+  //re-index the right side and filter out all the negative values
   for (var i = 0; i < rightSide.length; i++) {
-    if (rightSide[i].Value <= 0) {
+    if (rightSide[i].Value < 0) {
       rightSide.splice(i,1)
       break;
     }
+    //provive a new label
     rightSide[i].Number = rightSide.length - i;
     rightSide[i].Side = "right" + i
+    //push it to the result array
     bell.push(rightSide[i])
   };
 
@@ -120,13 +119,13 @@ router.get('/doors', function(req, res) {
 
 /* GET all readings for this sensor */
 router.get('/:id/readings', function(req, res) {
-  readings = sensor_reading(req.params.id, "10-09-2014", "10-10-2014"); //MM-DD-YYYY
+  readings = util_methods.sensor_reading(req.params.id, "10-09-2014", "10-10-2014"); //MM-DD-YYYY
   res.send(readings)
 });
 
 /* GET all readings for this sensor filtered by type */
 router.get('/:id/readings/:type', function(req, res) {
-  readings = sensor_reading(req.params.id, "10-07-2014", "10-10-2014", req.params.type); //MM-DD-YYYY
+  readings = util_methods.sensor_reading(req.params.id, "10-07-2014", "10-10-2014", req.params.type); //MM-DD-YYYY
   res.send(readings)
 });
 

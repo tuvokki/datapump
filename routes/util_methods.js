@@ -4,7 +4,7 @@ var util_methods = function (){
   var lib_version = '1.0.0';
 
   /* returns the version of this library */
-  this.getLibVersion = function() {
+  getLibVersion = function() {
     return lib_version;
   }
 
@@ -13,7 +13,7 @@ var util_methods = function (){
    * Returns a random boolean
    * In this case only a 30% likelihood of true, and a 70% likelihood of false.
    */
-   this.getRandomBool = function(){
+   getRandomBool = function(){
     //The default likelihood of success (returning true) is 50%
     return chance.bool({likelihood: 30});
   }
@@ -22,7 +22,7 @@ var util_methods = function (){
    * Returns a random integer between min (inclusive) and max (inclusive)
    * Using Math.round() will give you a non-uniform distribution!
    */
-   this.getRandomTemp = function(min, max) {
+   getRandomTemp = function(min, max) {
     if (min < 10) min = 10;
     if (max > 30) max = 30;
     return chance.floating({min: min, max: max, fixed: 2}) 
@@ -30,7 +30,7 @@ var util_methods = function (){
   /** --Utility methods-- **/
 
   /** CREATE THE SENSORDATA **/
-   this.sensor_reading = function(s_id, start_time, end_time, type) {
+   sensor_reading = function(s_id, start_time, end_time, type) {
     var start = moment(start_time, "MM-DD-YYYY");
     var end   = moment(end_time, "MM-DD-YYYY");
     var retval = [];
@@ -53,7 +53,7 @@ var util_methods = function (){
   }
 
   // n = 6 gives a good enough approximation of a bell curve
-  this.rnd2 = function() {
+  rnd2 = function() {
       return ((Math.random() + Math.random() + Math.random() + Math.random() + Math.random() + Math.random()) - 3) / 3;
   }
 
@@ -62,7 +62,7 @@ var util_methods = function (){
    * mean: mean
    * standard deviation: std_dev 
    */
-  this.createMemberInNormalDistribution = function(mean,std_dev){
+  createMemberInNormalDistribution = function(mean,std_dev){
       return mean + (gaussRandom()*std_dev);
   }
 
@@ -70,7 +70,7 @@ var util_methods = function (){
    * Returns random number in normal distribution centering on 0.
    * ~95% of numbers returned should fall between -2 and 2
    */
-  this.gaussRandom = function() {
+  gaussRandom = function() {
       var u = 2*Math.random()-1;
       var v = 2*Math.random()-1;
       var r = u*u + v*v;
@@ -84,6 +84,15 @@ var util_methods = function (){
        * and returning next time gaussRandom() is called.
        */
   }
+
+/** EXPORTS */
+  this.getRandomTemp = getRandomTemp;
+  this.getLibVersion = getLibVersion;
+  this.getRandomBool = getRandomBool;
+  this.sensor_reading = sensor_reading;
+  this.rnd2 = rnd2;
+  this.createMemberInNormalDistribution = createMemberInNormalDistribution;
+  this.gaussRandom = gaussRandom;
 };
 
 module.exports = util_methods;
