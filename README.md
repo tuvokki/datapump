@@ -9,3 +9,7 @@ The data-pump is a module, wrapped in an express app, that does the following:
 
 If a websocket is not available the pump generates intermediate data on a per request base (to support long polling). So if you request a sensor reading per second, and do that once every ten seconds you'll get ten readings per request.
 
+### Start DEBUG ###
+DEBUG=datapump nodemon ./bin/www
+### Start production ###
+node ./bin/www

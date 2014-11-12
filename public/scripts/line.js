@@ -26,7 +26,7 @@ var line = d3.svg.line()
     .x(function(d) { return x(d.time); })
     .y(function(d) { return y(d.temp); });
 
-var svg = d3.select("body").append("svg")
+var svg = d3.select(".content").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
   .append("g")

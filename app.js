@@ -22,11 +22,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', routes);
-app.use('/sensors', sensors);
-
 // print request info
 app.use(function(req, res, next) {
+    // console.log("Printing request info?");
     var end = res.end;
     var time = new Date;
     res.end = function(chunk, encoding){
@@ -42,9 +40,12 @@ app.use(function(req, res, next) {
     next();
 });
 
+app.use('/', routes);
+app.use('/sensors', sensors);
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-    var err = new Error('Not Found');
+    var err = new Error('Searching rainbows without the sun?');
     err.status = 404;
     next(err);
 });
@@ -55,6 +56,14 @@ app.use(function(req, res, next) {
 // will print stacktrace
 if (app.get('env') === 'development') {
     app.use(function(err, req, res, next) {
+        if (err.status === 404) {
+            var message = err.message || 'Itching my unknown places?'
+            res.render('notfound', {
+                title: 'There is nothing here.',
+                message: message + ' No unicorns here, baby...',
+                error: err
+            });
+        }
         res.status(err.status || 500);
         res.render('error', {
             message: err.message,
@@ -72,6 +81,5 @@ app.use(function(err, req, res, next) {
         error: {}
     });
 });
-
 
 module.exports = app;

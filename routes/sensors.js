@@ -29,12 +29,32 @@ _sensorlist.forEach(function(item) {
 })
 /** END CREATE THE SENSORS **/
 
-function value_sort_up(a, b) {
-    return a.Value - b.Value;
+function _value_sort_up(a, b) {
+  // return the sort
+  return a.Value - b.Value;
 }
-function value_sort_down(a, b) {
-    return a.Value - b.Value;
+
+function _value_sort_down(a, b) {
+  // return the sort
+  return a.Value - b.Value;
 }
+
+router.get('/utillib', function(req, res) {
+  // var ff = new util_methods();
+  res.send({result: util_methods.getLibVersion()});
+});
+
+router.get('/kapot500', function(req, res) {
+   var err = new Error("Alles kaputt.");
+   err.status = 500;
+   throw err;
+});
+
+router.get('/kapot404', function(req, res) {
+   var err = new Error("Alles kaputt.");
+   err.status = 404;
+   throw err;
+});
 
 router.get('/bell/:num', function(req, res) {
   var result = []
@@ -53,11 +73,11 @@ router.get('/bell/:num', function(req, res) {
   }
 
   //first sort the array
-  result.sort(value_sort_up);
+  result.sort(_value_sort_up);
   //split it in two equal parts
   var half_length = Math.ceil(result.length / 2);    
-  var leftSide = result.splice(0,half_length).sort(value_sort_down);
-  var rightSide = result.sort(value_sort_up);
+  var leftSide = result.splice(0,half_length).sort(_value_sort_down);
+  var rightSide = result.sort(_value_sort_up);
   //create a new empty array that will hold the result
   var bell = [];
 
@@ -141,13 +161,13 @@ router.get('/', function(req, res) {
 });
 
 // GET /1 -> return the sensor with id 1
-router.get('/:id', function(req, res) {
-    console.log(req.params.id);
-    //Reads a single entity with an idProperty of id
-    sensorReg.read(req.params.id, function (error, sensor) {
+router.get('/:id', function(req, res, next) {
+  console.log(req.params.id);
+  //Reads a single entity with an idProperty of id
+  sensorReg.read(req.params.id, function (error, sensor) {
     if (error) {
       console.log("error fetching data sensorReg: ", error)
-      res.status(500).end()
+      return next(err)
     }
  
     if (sensor) {
@@ -163,14 +183,11 @@ router.get('/:id', function(req, res) {
         res.send(sensor)
       })
     } else {
-      res.status(404).end()
+      var err = new Error('Sensor not found.');
+      err.status = 404;
+      return next(err)
     }
   })
-});
-
-router.get('/utillib', function(req, res) {
-  // var ff = new util_methods();
-  res.send({result: util_methods.getLibVersion()});
 });
 
 
