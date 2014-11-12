@@ -145,8 +145,23 @@ router.get('/:id/readings', function(req, res) {
 
 /* GET all readings for this sensor filtered by type */
 router.get('/:id/readings/:type', function(req, res) {
-  readings = util_methods.sensor_reading(req.params.id, "10-07-2014", "10-10-2014", req.params.type); //MM-DD-YYYY
-  res.send(readings)
+  var cachehit = false;
+  sensorData.find({ id: req.params.id, type: req.params.type }, function (error, cachereadings) {
+    console.log("cachereadings", cachereadings);
+    if (cachereadings.length > 0) {
+      cachehit = true;
+      res.send(cachereadings[0].data);
+    }
+  });
+  if (!cachehit){
+    console.log("refresh data");
+    readings = util_methods.sensor_reading(req.params.id, "10-07-2014", "10-10-2014", req.params.type); //MM-DD-YYYY
+    sensorData.create({ id: req.params.id, type: req.params.type, data: readings });
+    res.send(readings);
+    // sensorData.find({ id: req.params.id, type: req.params.type }, function (error, cachereadings) {
+      // res.send(cachereadings[0].data);
+    // });
+  }
 });
 
 /* GET list of sensors available. */
