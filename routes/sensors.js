@@ -1,9 +1,14 @@
 var express      = require('express'),
     router       = express.Router(),
     validator    = require('validator');
-    sensorReg    = require('save')('sensor'),
-    sensorSpec   = require('save')('sensorspecs'),
-    sensorData   = require('save')('sensordata'),
+    // verbose save databases
+    // sensorReg    = require('save')('sensor'),
+    // sensorSpec   = require('save')('sensorspecs'),
+    // sensorData   = require('save')('sensordata'),
+    // shut up save databases :)
+    sensorReg    = require('save')('sensor', { logger: { info: function () {}}}),
+    sensorSpec   = require('save')('sensorspecs', { logger: { info: function () {}}}),
+    sensorData   = require('save')('sensordata', { logger: { info: function () {}}}),
     moment       = require('moment'),
     range        = require('moment-range'),
     Ziggurat     = require('./ziggurat'),
@@ -147,8 +152,8 @@ router.get('/:id/readings', function(req, res) {
 router.get('/:id/readings/:type', function(req, res) {
   var cachehit = false;
   sensorData.find({ id: req.params.id, type: req.params.type }, function (error, cachereadings) {
-    console.log("cachereadings", cachereadings);
     if (cachereadings.length > 0) {
+      console.log("cached data");
       cachehit = true;
       res.send(cachereadings[0].data);
     }
