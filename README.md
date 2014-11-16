@@ -13,3 +13,5 @@ If a websocket is not available the pump generates intermediate data on a per re
 DEBUG=datapump nodemon ./bin/www
 ### Start production ###
 node ./bin/www
+
+[![Build Status](https://travis-ci.org/tuvokki/datapump.svg?branch=master)](https://travis-ci.org/tuvokki/datapump)
