@@ -24,20 +24,20 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // print request info
 app.use(function(req, res, next) {
-    // console.log("Printing request info?");
-    var end = res.end;
-    var time = new Date;
-    res.end = function(chunk, encoding){
-        res.end = end;
-        if (chunk) {
-          //the remote ip
-          var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-          // console.log('DEV REQ from: ' + ip);
-          console.log('[' + time + '] ' + ip);
-        }
-        res.end(chunk, encoding);
-    };
-    next();
+  // console.log("Printing request info?");
+  var end = res.end;
+  var time = new Date;
+  res.end = function(chunk, encoding){
+    res.end = end;
+    if (chunk) {
+      //the remote ip
+      var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+      // console.log('DEV REQ from: ' + ip);
+      console.log('[' + time + '] ' + ip);
+    }
+    res.end(chunk, encoding);
+  };
+  next();
 });
 
 app.use('/', routes);
@@ -45,9 +45,9 @@ app.use('/sensors', sensors);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-    var err = new Error('Searching rainbows without the sun?');
-    err.status = 404;
-    next(err);
+  var err = new Error('Searching rainbows without the sun?');
+  err.status = 404;
+  next(err);
 });
 
 // error handlers
@@ -55,31 +55,40 @@ app.use(function(req, res, next) {
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-    app.use(function(err, req, res, next) {
-        if (err.status === 404) {
-            var message = err.message || 'Itching my unknown places?'
-            res.render('notfound', {
-                title: 'There is nothing here.',
-                message: message + ' No unicorns here, baby...',
-                error: err
-            });
-        }
-        res.status(err.status || 500);
-        res.render('error', {
-            message: err.message,
-            error: err
-        });
+  app.use(function(err, req, res, next) {
+    if (err.status === 404) {
+      var message = err.message || 'Itching my unknown places?'
+      res.render('notfound', {
+        title: 'There is nothing here.',
+        message: message + ' No unicorns here, baby...',
+        error: err
+      });
+    }
+    res.status(err.status || 500);
+    res.render('error', {
+      message: err.message,
+      error: err
     });
+  });
 }
 
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-        message: err.message,
-        error: {}
-    });
+  res.status(err.status || 500);
+  res.render('error', {
+    message: err.message,
+    error: {}
+  });
 });
+
+if (!module.parent) {
+  app.listen(port, host, function () {
+    console.log("Express server listening on port %d in %s mode",
+      app.address().port,
+      app.settings.env
+    );
+  });
+}
 
 module.exports = app;
