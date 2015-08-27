@@ -20,7 +20,7 @@ function defaultGetOptions(path) {
 describe('app', function () {
  
   before (function (done) {
-    app.listen(port + 1, function (err, result) {
+    app.listen(port, function (err, result) {
       if (err) {
         done(err);
       } else {
